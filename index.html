@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💖 爱心消息生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .control-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        h1 {
+            color: #ff69b4;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 24px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .heart {
+            color: #ff69b4;
+            margin: 0 5px;
+        }
+        
+        .counter {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #333;
+            background: #fff5f7;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px dashed #ffb6c1;
+        }
+        
+        .control-group {
+            margin: 20px 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 5px 0;
+            border: 2px solid #ffb6c1;
+            border-radius: 12px;
+            font-size: 16px;
+            text-align: center;
+            outline: none;
+        }
+        
+        input:focus {
+            border-color: #ff69b4;
+            box-shadow: 0 0 8px rgba(255, 105, 180, 0.3);
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 25px 0;
+        }
+        
+        button {
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .create-btn { background: #ffb6c1; }
+        .clear-btn { background: #add8e6; }
+        .auto-btn { background: #90ee90; }
+        .stop-btn { background: #ffa07a; }
+        
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+        
+        .create-btn:active { background: #ff69b4; }
+        .clear-btn:active { background: #87ceeb; }
+        .auto-btn:active { background: #7cfc00; }
+        .stop-btn:active { background: #ff7f50; }
+        
+        .message {
+            position: fixed;
+            background: #ffb6c1;
+            padding: 16px 28px;
+            border-radius: 25px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.4s;
+            text-align: center;
+            font-weight: bold;
+            color: #333;
+            max-width: 220px;
+            word-wrap: break-word;
+            font-size: 16px;
+            border: 2px solid white;
+            z-index: 1000;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        
+        .message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        
+        .info {
+            background: #f8f9fa;
+            padding: 16px;
+            border-radius: 12px;
+            margin-top: 25px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #666;
+            border-left: 4px solid #ff69b4;
+        }
+        
+        .info strong {
+            color: #ff69b4;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .control-panel {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 22px;
+            }
+            
+            .buttons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="control-panel">
+        <h1><span class="heart">💖</span> 爱心消息生成器 <span class="heart">💖</span></h1>
+        
+        <div class="counter" id="counter">当前消息数量: 0</div>
+        
+        <div class="control-group">
+            <label for="windowCount">设置要创建的消息数量:</label>
+            <input type="number" id="windowCount" min="1" max="30" value="10">
+        </div>
+        
+        <div class="buttons">
+            <button class="create-btn" onclick="createMultipleMessages()">创建消息</button>
+            <button class="clear-btn" onclick="clearAllMessages()">清除所有</button>
+            <button class="auto-btn" onclick="startAutoMode()">自动模式</button>
+            <button class="stop-btn" onclick="stopAutoMode()">停止自动</button>
+        </div>
+        
+        <div class="info">
+            <strong>💡 使用说明:</strong>
+            • 先设置想要的消息数量<br>
+            • 点击"创建消息"按钮<br>
+            • 自动模式会持续创建消息<br>
+            • 点击任意消息可以关闭它<br>
+            • 在微信中可直接分享给好友
+        </div>
+        
+        <div class="footer">
+            专为浪漫时刻设计 💝
+        </div>
+    </div>
+
+    <script>
+        // 爱心消息内容
+        const messages = [
+            "我想你了！💕", "你好可爱！😊", "今天过得怎么样？", "你是我的一切 🌟",
+            "爱你哦！❤️", "好想你呀", "你是最棒的！👍", "心心念念都是你 💭",
+            "遇见你真好 ✨", "你笑起来真好看 😄", "想抱抱你 🤗", "永远在一起 💑",
+            "今天特别想你", "你在我心里 💗", "超级喜欢你！", "每一天都爱你 🎯",
+            "你是我的小幸运 🍀", "想你想到睡不着", "爱你三千遍 💫", "我的全世界 🌎"
+        ];
+        
+        // 爱心颜色
+        const colors = [
+            "#ffb6c1", "#ff69b4", "#ffc0cb", "#db7093", 
+            "#ffa07a", "#f08080", "#ff9999", "#ff7777",
+            "#ffb8d9", "#ff85a2", "#ff9eb5", "#ffa8c8"
+        ];
+        
+        let messageCount = 0;
+        let autoInterval = null;
+        let allMessages = [];
+
+        // 创建单个爱心消息
+        function createSingleMessage() {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message';
+            
+            // 随机选择消息和颜色
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            messageElement.textContent = randomMessage;
+            messageElement.style.background = randomColor;
+            
+            // 随机位置（避免超出屏幕）
+            const maxX = window.innerWidth - 250;
+            const maxY = window.innerHeight - 100;
+            const randomX = Math.max(20, Math.min(maxX, Math.random() * maxX));
+            const randomY = Math.max(20, Math.min(maxY, Math.random() * maxY));
+            
+            messageElement.style.left = randomX + 'px';
+            messageElement.style.top = randomY + 'px';
+            
+            // 点击关闭效果
+            messageElement.onclick = function() {
+                closeMessage(this);
+            };
+            
+            // 添加到页面
+            document.body.appendChild(messageElement);
+            allMessages.push(messageElement);
+            messageCount++;
+            updateCounter();
+            
+            // 显示动画
+            setTimeout(() => {
+                messageElement.classList.add('show');
+            }, 10);
+        }
+
+        // 关闭消息
+        function closeMessage(messageElement) {
+            messageElement.classList.remove('show');
+            setTimeout(() => {
+                if (messageElement.parentNode) {
+                    messageElement.remove();
+                    const index = allMessages.indexOf(messageElement);
+                    if (index > -1) {
+                        allMessages.splice(index, 1);
+                    }
+                    messageCount--;
+                    updateCounter();
+                }
+            }, 400);
+        }
+
+        // 创建多个消息
+        function createMultipleMessages() {
+            const targetCount = parseInt(document.getElementById('windowCount').value);
+            
+            if (isNaN(targetCount) || targetCount < 1 || targetCount > 30) {
+                alert('请输入1到30之间的数字！');
+                return;
+            }
+            
+            const messagesToCreate = targetCount - messageCount;
+            
+            if (messagesToCreate <= 0) {
+                alert('当前消息数量已经达到或超过目标数量啦！');
+                return;
+            }
+            
+            let created = 0;
+            const createInterval = setInterval(() => {
+                createSingleMessage();
+                created++;
+                if (created >= messagesToCreate) {
+                    clearInterval(createInterval);
+                }
+            }, 150);
+        }
+
+        // 清除所有消息
+        function clearAllMessages() {
+            allMessages.forEach((msg, index) => {
+                setTimeout(() => {
+                    closeMessage(msg);
+                }, index * 50);
+            });
+            
+            setTimeout(() => {
+                messageCount = 0;
+                updateCounter();
+            }, allMessages.length * 50 + 400);
+        }
+
+        // 开始自动模式
+        function startAutoMode() {
+            if (autoInterval) {
+                alert('自动模式已经在运行啦！');
+                return;
+            }
+            
+            const maxMessages = parseInt(document.getElementById('windowCount').value);
+            
+            if (isNaN(maxMessages) || maxMessages < 1 || maxMessages > 30) {
+                alert('请先设置合理的消息数量（1-30）！');
+                return;
+            }
+            
+            autoInterval = setInterval(() => {
+                if (messageCount < maxMessages) {
+                    createSingleMessage();
+                } else {
+                    stopAutoMode();
+                    setTimeout(() => {
+                        alert(`已经创建了 ${maxMessages} 个爱心消息啦！💝`);
+                    }, 500);
+                }
+            }, 800);
+            
+            alert(`自动模式开始啦！将会创建 ${maxMessages} 个爱心消息 💖`);
+        }
+
+        // 停止自动模式
+        function stopAutoMode() {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                autoInterval = null;
+                alert('自动模式已停止 ✋');
+            } else {
+                alert('自动模式还没有开始呢～');
+            }
+        }
+
+        // 更新计数器显示
+        function updateCounter() {
+            document.getElementById('counter').textContent = `当前消息数量: ${messageCount}`;
+        }
+
+        // 页面加载时创建几个初始消息
+        window.onload = function() {
+            setTimeout(() => {
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(() => createSingleMessage(), i * 400);
+                }
+            }, 500);
+            
+            // 添加触摸事件支持（移动端）
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        };
+
+        // 防止手机端拖动时选中文本
+        document.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+        }, { passive: false });
+    </script>
+</body>
+</html>
