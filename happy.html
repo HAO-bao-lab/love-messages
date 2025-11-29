@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- 微信特定优化 -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="renderer" content="webkit">
+    <title>生日快乐！</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: 'PingFang SC', 'Helvetica Neue', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #fad0c4, #a1c4fd);
+            background-size: 400% 400%;
+            -webkit-animation: gradientBG 15s ease infinite;
+            animation: gradientBG 15s ease infinite;
+            min-height: 100vh;
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+        
+        @-webkit-keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* 名字输入弹窗 */
+        .name-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .name-modal-content {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            -webkit-box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            max-width: 400px;
+            width: 90%;
+            margin: 0 auto;
+        }
+        
+        .name-modal h2 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        
+        .name-modal p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+        
+        .name-input {
+            width: 100%;
+            padding: 15px;
+            margin: 20px 0;
+            border: 2px solid #ffb6c1;
+            border-radius: 12px;
+            font-size: 18px;
+            text-align: center;
+            outline: none;
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+            -webkit-appearance: none;
+        }
+        
+        .name-input:focus {
+            border-color: #ff6b6b;
+            -webkit-box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .submit-btn {
+            background: linear-gradient(to right, #ff6b6b, #ff8e8e);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            -webkit-transition: all 0.3s;
+            transition: all 0.3s;
+            -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            -webkit-appearance: none;
+        }
+        
+        .submit-btn:active {
+            -webkit-transform: translateY(3px);
+            transform: translateY(3px);
+            -webkit-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 主祝福页面 */
+        .container {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            -webkit-box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            font-size: 32px;
+            -webkit-text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .birthday-cake {
+            margin: 20px auto;
+            width: 200px;
+            height: 150px;
+            position: relative;
+        }
+        
+        .cake {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            width: 120px;
+            height: 60px;
+            background: #f8c8dc;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .cake-top {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            width: 140px;
+            height: 30px;
+            background: #ffb6c1;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .candle {
+            position: absolute;
+            bottom: 90px;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            width: 8px;
+            height: 30px;
+            background: #fff;
+            border-radius: 4px;
+        }
+        
+        .flame {
+            position: absolute;
+            bottom: 120px;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            width: 15px;
+            height: 20px;
+            background: #ff9d00;
+            border-radius: 50% 50% 20% 20%;
+            -webkit-animation: flicker 1.5s infinite alternate;
+            animation: flicker 1.5s infinite alternate;
+        }
+        
+        @-webkit-keyframes flicker {
+            0%, 100% { -webkit-transform: translateX(-50%) scale(1); transform: translateX(-50%) scale(1); }
+            50% { -webkit-transform: translateX(-50%) scale(1.1); transform: translateX(-50%) scale(1.1); }
+        }
+        
+        @keyframes flicker {
+            0%, 100% { -webkit-transform: translateX(-50%) scale(1); transform: translateX(-50%) scale(1); }
+            50% { -webkit-transform: translateX(-50%) scale(1.1); transform: translateX(-50%) scale(1.1); }
+        }
+        
+        .message {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            -webkit-box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #ff6b6b;
+        }
+        
+        .message p {
+            line-height: 1.6;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            bottom: -100px;
+            -webkit-animation: floatUp 15s linear infinite;
+            animation: floatUp 15s linear infinite;
+            z-index: 1;
+        }
+        
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            -webkit-transform: translateX(-50%);
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background: #ff6b6b;
+        }
+        
+        .balloon:nth-child(2n) {
+            background: #4facfe;
+            -webkit-animation-delay: 2s;
+            animation-delay: 2s;
+            left: 20%;
+        }
+        
+        .balloon:nth-child(3n) {
+            background: #6c5ce7;
+            -webkit-animation-delay: 4s;
+            animation-delay: 4s;
+            left: 40%;
+        }
+        
+        .balloon:nth-child(4n) {
+            background: #00b894;
+            -webkit-animation-delay: 6s;
+            animation-delay: 6s;
+            left: 60%;
+        }
+        
+        .balloon:nth-child(5n) {
+            background: #fdcb6e;
+            -webkit-animation-delay: 8s;
+            animation-delay: 8s;
+            left: 80%;
+        }
+        
+        @-webkit-keyframes floatUp {
+            0% {
+                -webkit-transform: translateY(0) rotate(0deg);
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-100vh) rotate(20deg);
+                transform: translateY(-100vh) rotate(20deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes floatUp {
+            0% {
+                -webkit-transform: translateY(0) rotate(0deg);
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-100vh) rotate(20deg);
+                transform: translateY(-100vh) rotate(20deg);
+                opacity: 0;
+            }
+        }
+        
+        .floating-text {
+            position: fixed;
+            font-weight: bold;
+            -webkit-text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+            opacity: 0;
+            -webkit-animation: floatText 15s linear forwards;
+            animation: floatText 15s linear forwards;
+            pointer-events: none;
+        }
+        
+        @-webkit-keyframes floatText {
+            0% {
+                -webkit-transform: translateY(100vh) rotate(0deg);
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-100px) rotate(10deg);
+                transform: translateY(-100px) rotate(10deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes floatText {
+            0% {
+                -webkit-transform: translateY(100vh) rotate(0deg);
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                -webkit-transform: translateY(-100px) rotate(10deg);
+                transform: translateY(-100px) rotate(10deg);
+                opacity: 0;
+            }
+        }
+        
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .birthday-message {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            -webkit-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            max-width: 280px;
+            text-align: center;
+            z-index: 100;
+            opacity: 0;
+            -webkit-transform: scale(0.8);
+            transform: scale(0.8);
+            -webkit-transition: all 0.4s;
+            transition: all 0.4s;
+            border-top: 5px solid #ff6b6b;
+        }
+        
+        .birthday-message.show {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1);
+        }
+        
+        .birthday-message h3 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+        }
+        
+        .birthday-message p {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .close-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            -webkit-appearance: none;
+        }
+        
+        .footer {
+            margin-top: 20px;
+            color: #888;
+            font-size: 14px;
+        }
+        
+        .counter {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #ff6b6b;
+            -webkit-box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+        
+        /* 微信分享提示 */
+        .wechat-tip {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-orient: vertical;
+            -webkit-box-direction: normal;
+            -webkit-flex-direction: column;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            -webkit-box-align: center;
+            -webkit-align-items: center;
+            -ms-flex-align: center;
+            align-items: center;
+            -webkit-box-pack: center;
+            -webkit-justify-content: center;
+            -ms-flex-pack: center;
+            justify-content: center;
+            z-index: 2000;
+            color: white;
+            text-align: center;
+            display: none;
+        }
+        
+        .wechat-tip img {
+            width: 200px;
+            margin-bottom: 20px;
+        }
+        
+        .wechat-tip p {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 微信分享提示 -->
+    <div class="wechat-tip" id="wechatTip">
+        <p>点击右上角</p>
+        <p>分享给朋友</p>
+        <p>一起送上祝福！</p>
+    </div>
+    
+    <!-- 气球背景 -->
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    
+    <!-- 计数器 -->
+    <div class="counter" id="textCounter">飘动文字: 0</div>
+    
+    <!-- 名字输入弹窗 -->
+    <div class="name-modal" id="nameModal">
+        <div class="name-modal-content">
+            <h2>🎂 生日祝福 🎂</h2>
+            <p>请输入寿星的名字，我们将为您生成个性化的生日祝福！</p>
+            <input type="text" class="name-input" id="nameInput" placeholder="请输入寿星的名字" maxlength="10" autofocus>
+            <button class="submit-btn" onclick="startBirthdayWish()">开始祝福</button>
+            <p style="margin-top: 15px; font-size: 14px; color: #999;">点击右上角可分享给朋友</p>
+        </div>
+    </div>
+    
+    <!-- 主祝福页面 -->
+    <div class="container" id="mainContainer" style="display: none;">
+        <h1 id="birthdayTitle">🎉 生日快乐！ 🎉</h1>
+        
+        <div class="birthday-cake">
+            <div class="cake-top"></div>
+            <div class="cake"></div>
+            <div class="candle"></div>
+            <div class="flame"></div>
+        </div>
+        
+        <div class="message" id="birthdayMessage">
+            <p>亲爱的<span id="namePlaceholder">XXX</span>，</p>
+            <p>在这个特别的日子里，</p>
+            <p>愿你的每一个愿望都能实现，</p>
+            <p>每一份快乐都能加倍，</p>
+            <p>每一刻都充满幸福和欢笑！</p>
+        </div>
+        
+        <div class="footer">
+            <p>祝<span id="footerName">XXX</span>有美好的一天！ ❤️</p>
+            <p style="margin-top: 10px; font-size: 12px;">点击右上角分享给朋友</p>
+        </div>
+    </div>
+
+    <script>
+        // 存储用户输入的名字
+        var birthdayName = "";
+        var floatingTextCount = 0;
+        var autoInterval;
+        
+        // 生日祝福语数组
+        var birthdayMessages = [
+            "生日快乐", "天天开心", "幸福美满", "心想事成",
+            "健康快乐", "笑口常开", "青春永驻", "万事如意",
+            "平安喜乐", "前程似锦", "梦想成真", "友谊长存",
+            "甜蜜幸福", "好运连连", "心想事成", "快乐无限",
+            "美好时光", "永远年轻", "精彩无限", "幸福永恒",
+            "爱你哦", "你是最棒的", "心想事成", "永远美丽",
+            "开心每一天", "心想事成", "永远18岁", "幸福安康",
+            "快乐无限", "梦想成真", "青春永驻", "万事顺心",
+            "甜蜜幸福", "永远开心", "心想事成", "美好时光"
+        ];
+        
+        // 颜色数组
+        var colors = [
+            "#ff6b6b", "#4facfe", "#6c5ce7", "#00b894", 
+            "#fdcb6e", "#fd79a8", "#a29bfe", "#55efc4",
+            "#ffeaa7", "#fab1a0", "#74b9ff", "#fd9644",
+            "#786fa6", "#f8a5c2", "#63cdda", "#ea8685"
+        ];
+        
+        // 检测是否在微信中打开
+        function isWeChatBrowser() {
+            var ua = navigator.userAgent.toLowerCase();
+            return ua.indexOf('micromessenger') !== -1;
+        }
+        
+        // 显示微信分享提示
+        function showWeChatTip() {
+            if (isWeChatBrowser()) {
+                document.getElementById('wechatTip').style.display = 'flex';
+                setTimeout(function() {
+                    document.getElementById('wechatTip').style.display = 'none';
+                }, 3000);
+            }
+        }
+        
+        // 开始生日祝福
+        function startBirthdayWish() {
+            var nameInput = document.getElementById('nameInput');
+            var name = nameInput.value.trim();
+            
+            if (name === "") {
+                alert("请输入寿星的名字！");
+                nameInput.focus();
+                return;
+            }
+            
+            // 保存名字
+            birthdayName = name;
+            
+            // 隐藏输入弹窗，显示主界面
+            document.getElementById('nameModal').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+            document.getElementById('textCounter').style.display = 'block';
+            
+            // 更新页面上的名字
+            updateNameInPage();
+            
+            // 开始自动效果
+            startAutoEffects();
+            
+            // 显示微信分享提示
+            setTimeout(showWeChatTip, 1000);
+        }
+        
+        // 开始自动效果
+        function startAutoEffects() {
+            // 显示初始祝福消息
+            setTimeout(showBirthdayMessage, 1000);
+            
+            // 创建初始飘动文字
+            createFloatingText(15);
+            
+            // 开始自动循环效果
+            var effectCount = 0;
+            autoInterval = setInterval(function() {
+                // 交替触发不同效果
+                if (effectCount % 3 === 0) {
+                    trigger30FloatingTexts();
+                } else if (effectCount % 3 === 1) {
+                    showBirthdayMessage();
+                } else {
+                    createConfetti();
+                }
+                
+                effectCount++;
+                
+                // 每6次循环后休息一下
+                if (effectCount >= 18) {
+                    clearInterval(autoInterval);
+                    // 5秒后重新开始
+                    setTimeout(function() {
+                        effectCount = 0;
+                        autoInterval = setInterval(function() {
+                            if (effectCount % 3 === 0) {
+                                trigger30FloatingTexts();
+                            } else if (effectCount % 3 === 1) {
+                                showBirthdayMessage();
+                            } else {
+                                createConfetti();
+                            }
+                            effectCount++;
+                        }, 2000);
+                    }, 5000);
+                }
+            }, 2000);
+        }
+        
+        // 更新页面上的名字
+        function updateNameInPage() {
+            document.getElementById('namePlaceholder').textContent = birthdayName;
+            document.getElementById('footerName').textContent = birthdayName;
+            document.getElementById('birthdayTitle').textContent = "🎉 " + birthdayName + "，生日快乐！ 🎉";
+        }
+        
+        // 触发30次飘动文字
+        function trigger30FloatingTexts() {
+            // 创建30个飘动文字，每个间隔50毫秒
+            for (var i = 0; i < 30; i++) {
+                (function(i) {
+                    setTimeout(function() {
+                        createSingleFloatingText();
+                    }, i * 50);
+                })(i);
+            }
+        }
+        
+        // 创建单个飘动文字
+        function createSingleFloatingText() {
+            var textElement = document.createElement('div');
+            textElement.className = 'floating-text';
+            
+            // 随机选择文字和颜色
+            var randomMessage = birthdayMessages[Math.floor(Math.random() * birthdayMessages.length)];
+            var randomColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            textElement.textContent = randomMessage;
+            textElement.style.color = randomColor;
+            
+            // 随机位置
+            var left = Math.random() * (window.innerWidth - 100);
+            textElement.style.left = left + 'px';
+            
+            // 随机字体大小
+            var fontSize = Math.random() * 20 + 16;
+            textElement.style.fontSize = fontSize + 'px';
+            
+            // 随机动画时长
+            var duration = Math.random() * 10 + 10;
+            
+            textElement.style.animation = 'floatText ' + duration + 's linear forwards';
+            
+            document.body.appendChild(textElement);
+            
+            // 更新计数器
+            floatingTextCount++;
+            document.getElementById('textCounter').textContent = '飘动文字: ' + floatingTextCount;
+            
+            // 自动移除元素
+            setTimeout(function() {
+                if (textElement.parentNode) {
+                    textElement.remove();
+                    floatingTextCount--;
+                    document.getElementById('textCounter').textContent = '飘动文字: ' + floatingTextCount;
+                }
+            }, duration * 1000);
+        }
+        
+        // 创建飘动文字
+        function createFloatingText(count) {
+            count = count || 10;
+            for (var i = 0; i < count; i++) {
+                (function(i) {
+                    setTimeout(function() {
+                        createSingleFloatingText();
+                    }, i * 200);
+                })(i);
+            }
+        }
+        
+        // 创建生日祝福消息
+        function showBirthdayMessage() {
+            // 移除可能已存在的消息
+            var existingMessage = document.querySelector('.birthday-message');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // 创建新消息
+            var message = document.createElement('div');
+            message.className = 'birthday-message';
+            
+            // 随机位置
+            var x = Math.max(50, Math.random() * (window.innerWidth - 300));
+            var y = Math.max(50, Math.random() * (window.innerHeight - 200));
+            
+            message.style.left = x + 'px';
+            message.style.top = y + 'px';
+            
+            // 生日祝福语（包含名字）
+            var messages = [
+                "愿" + birthdayName + "的生日充满欢笑和爱！",
+                "新的一岁，愿" + birthdayName + "心想事成！",
+                "生日快乐，愿" + birthdayName + "永远年轻美丽！",
+                "祝" + birthdayName + "生日快乐，天天开心！",
+                "愿" + birthdayName + "的每一天都像生日一样特别！",
+                "生日快乐，愿幸福永远伴随" + birthdayName + "！",
+                "新的一岁，新的开始，" + birthdayName + "加油！",
+                "祝" + birthdayName + "梦想成真，生日快乐！",
+                "愿" + birthdayName + "的生活像蛋糕一样甜蜜！",
+                "生日快乐，" + birthdayName + "你是最棒的！"
+            ];
+            
+            var randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            
+            message.innerHTML = '<h3>给' + birthdayName + '的祝福 💝</h3><p>' + randomMessage + '</p><button class="close-btn" onclick="this.parentElement.remove()">关闭</button>';
+            
+            document.body.appendChild(message);
+            
+            // 显示动画
+            setTimeout(function() {
+                message.classList.add('show');
+            }, 10);
+            
+            // 10秒后自动关闭
+            setTimeout(function() {
+                if (message.parentNode) {
+                    message.remove();
+                }
+            }, 10000);
+        }
+        
+        // 创建彩色纸屑效果
+        function createConfetti() {
+            var colors = ['#ff6b6b', '#4facfe', '#6c5ce7', '#00b894', '#fdcb6e', '#fd79a8'];
+            
+            for (var i = 0; i < 100; i++) {
+                var confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                
+                // 随机属性
+                var color = colors[Math.floor(Math.random() * colors.length)];
+                var size = Math.random() * 10 + 5;
+                var left = Math.random() * window.innerWidth;
+                var animationDuration = Math.random() * 3 + 2;
+                
+                confetti.style.backgroundColor = color;
+                confetti.style.width = size + 'px';
+                confetti.style.height = size + 'px';
+                confetti.style.left = left + 'px';
+                confetti.style.top = '-10px';
+                confetti.style.opacity = '1';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                
+                // 动画
+                confetti.style.animation = 'confettiFall ' + animationDuration + 's linear forwards';
+                
+                // 添加动画关键帧
+                if (!document.querySelector('#confettiAnimation')) {
+                    var style = document.createElement('style');
+                    style.id = 'confettiAnimation';
+                    style.textContent = '@keyframes confettiFall { 0% { transform: translateY(0) rotate(0deg); opacity: 1; } 100% { transform: translateY(' + window.innerHeight + 'px) rotate(' + (360 + Math.random() * 360) + 'deg); opacity: 0; } }';
+                    document.head.appendChild(style);
+                }
+                
+                document.body.appendChild(confetti);
+                
+                // 移除元素
+                setTimeout(function() {
+                    if (confetti.parentNode) {
+                        confetti.remove();
+                    }
+                }, animationDuration * 1000);
+            }
+        }
+        
+        // 支持按回车键提交名字
+        document.getElementById('nameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startBirthdayWish();
+            }
+        });
+        
+        // 页面加载完成后显示微信提示
+        window.onload = function() {
+            if (isWeChatBrowser()) {
+                setTimeout(showWeChatTip, 1000);
+            }
+        };
+    </script>
+</body>
+</html>
